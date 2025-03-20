@@ -6,18 +6,6 @@ class ReaderWriter:
         self._reader_mutex = Semaphore(1)
         self._reader_writer_mutex = Semaphore(1)
 
-    def increment_reader(self):
-        if self._reader_mutex.acquire(blocking=False):
-            raise RuntimeError("Error: Reader mutex was not locked!")
-        self.__reader_count += 1
-        return self.__reader_count
-
-    def decrement_reader(self):
-        if self._reader_mutex.acquire(blocking=False):
-            raise RuntimeError("Error: Reader mutex was not locked!")
-        self.__reader_count -= 1
-        return self.__reader_count
-
     class ReadLock:
         def __init__(self, reader_writer):
             if not isinstance(reader_writer, ReaderWriter):
@@ -39,6 +27,18 @@ class ReaderWriter:
                     self.outer._reader_writer_mutex.release()
 
             return False # Allow exceptions to propagate
+
+    def increment_reader(self):
+        if self._reader_mutex.acquire(blocking=False):
+            raise RuntimeError("Error: Reader mutex was not locked!")
+        self.__reader_count += 1
+        return self.__reader_count
+
+    def decrement_reader(self):
+        if self._reader_mutex.acquire(blocking=False):
+            raise RuntimeError("Error: Reader mutex was not locked!")
+        self.__reader_count -= 1
+        return self.__reader_count
 
     class WriteLock:
         def __init__(self, reader_writer):
