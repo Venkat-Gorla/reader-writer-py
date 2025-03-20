@@ -1,2 +1,2 @@
 # reader-writer-py
-Readers writers implementation in python
+Readers writers implementation for concurrency control in python
