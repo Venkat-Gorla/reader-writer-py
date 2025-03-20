@@ -6,30 +6,36 @@ class ReaderWriter:
         self.__reader_mutex = Semaphore(1)
         self.__reader_writer_mutex = Semaphore(1)
 
-# vegorla any further cleanup?
+    def increment_reader(self):
+        self.__reader_count += 1
+        return self.__reader_count
+
+    def decrement_reader(self):
+        self.__reader_count -= 1
+        return self.__reader_count
+
     class ReadLock:
         def __init__(self, reader_writer):
             self.outer = reader_writer
 
         def __enter__(self):
-            self.outer.__reader_mutex.acquire()
-
-            self.outer.__reader_count += 1
-            if self.outer.__reader_count == 1:
-                self.outer.__reader_writer_mutex.acquire()
-
-            self.outer.__reader_mutex.release()
+            with self.outer.__reader_mutex:
+                readers = self.outer.increment_reader()
+                if readers == 1:
+                    self.outer.__reader_writer_mutex.acquire()
 
             return self
 
         def __exit__(self, exc_type, exc_value, traceback):
-            self.outer.__reader_mutex.acquire()
+            with self.outer.__reader_mutex:
+                readers = self.outer.decrement_reader()
+                if readers == 0:
+                    self.outer.__reader_writer_mutex.release()
 
-            self.outer.__reader_count -= 1
-            if self.outer.__reader_count == 0:
-                self.outer.__reader_writer_mutex.release()
+            return False  # Allow exceptions to propagate
 
-            self.outer.__reader_mutex.release()
-
-            return True  # Suppress exception (exception will not propagate)
-
+# vegorla remove after testing
+# Example Usage
+reader_writer = ReaderWriter()
+with reader_writer.ReadLock(reader_writer):
+    print("Reading data safely!")
