@@ -20,7 +20,6 @@ class ReaderWriter:
         def __init__(self, reader_writer):
             if not isinstance(reader_writer, ReaderWriter):
                 raise TypeError("ReadLock must be instantiated with a ReaderWriter instance.")
-
             self.outer = reader_writer
 
         def __enter__(self):
@@ -39,8 +38,26 @@ class ReaderWriter:
 
             return False # Allow exceptions to propagate
 
+    class WriteLock:
+        def __init__(self, reader_writer):
+            if not isinstance(reader_writer, ReaderWriter):
+                raise TypeError("WriteLock must be instantiated with a ReaderWriter instance.")
+            self.outer = reader_writer
+
+        def __enter__(self):
+            self.outer._reader_writer_mutex.acquire()
+            return self
+
+        def __exit__(self, exc_type, exc_value, traceback):
+            self.outer._reader_writer_mutex.release()
+            return False  # Allow exceptions to propagate
+
 # vegorla remove after testing
 # Example Usage
 reader_writer = ReaderWriter()
 with reader_writer.ReadLock(reader_writer):
     print("Reading data safely!")
+
+# Using WriteLock
+with reader_writer.WriteLock(reader_writer):
+    print("Writing data safely!")
