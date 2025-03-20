@@ -18,6 +18,9 @@ class ReaderWriter:
 
     class ReadLock:
         def __init__(self, reader_writer):
+            if not isinstance(reader_writer, ReaderWriter):
+                raise TypeError("ReadLock must be instantiated with a ReaderWriter instance.")
+
             self.outer = reader_writer
 
         def __enter__(self):
@@ -38,7 +41,6 @@ class ReaderWriter:
 
 # vegorla remove after testing
 # Example Usage
-# make sure ReadLock cannot be created without first creating outer object
 reader_writer = ReaderWriter()
 with reader_writer.ReadLock(reader_writer):
     print("Reading data safely!")
