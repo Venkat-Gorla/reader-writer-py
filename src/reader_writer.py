@@ -7,11 +7,12 @@ class ReaderWriter:
         self._reader_writer_mutex = Semaphore(1)
 
     def increment_reader(self):
-        # pending: can we assert semaphore is taken here?
+        assert not self._reader_mutex.acquire(blocking=False), "Error: Reader mutex was not locked!"
         self.__reader_count += 1
         return self.__reader_count
 
     def decrement_reader(self):
+        assert not self._reader_mutex.acquire(blocking=False), "Error: Reader mutex was not locked!"
         self.__reader_count -= 1
         return self.__reader_count
 
@@ -33,10 +34,11 @@ class ReaderWriter:
                 if readers == 0:
                     self.outer._reader_writer_mutex.release()
 
-            return False  # Allow exceptions to propagate
+            return False # Allow exceptions to propagate
 
 # vegorla remove after testing
 # Example Usage
+# make sure ReadLock cannot be created without first creating outer object
 reader_writer = ReaderWriter()
 with reader_writer.ReadLock(reader_writer):
     print("Reading data safely!")
