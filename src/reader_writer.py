@@ -7,12 +7,14 @@ class ReaderWriter:
         self._reader_writer_mutex = Semaphore(1)
 
     def increment_reader(self):
-        assert not self._reader_mutex.acquire(blocking=False), "Error: Reader mutex was not locked!"
+        if self._reader_mutex.acquire(blocking=False):
+            raise RuntimeError("Error: Reader mutex was not locked!")
         self.__reader_count += 1
         return self.__reader_count
 
     def decrement_reader(self):
-        assert not self._reader_mutex.acquire(blocking=False), "Error: Reader mutex was not locked!"
+        if self._reader_mutex.acquire(blocking=False):
+            raise RuntimeError("Error: Reader mutex was not locked!")
         self.__reader_count -= 1
         return self.__reader_count
 
