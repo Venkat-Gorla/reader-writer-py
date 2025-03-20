@@ -3,10 +3,11 @@ from threading import Semaphore
 class ReaderWriter:
     def __init__(self):
         self.__reader_count = 0
-        self.__reader_mutex = Semaphore(1)
-        self.__reader_writer_mutex = Semaphore(1)
+        self._reader_mutex = Semaphore(1)
+        self._reader_writer_mutex = Semaphore(1)
 
     def increment_reader(self):
+        # pending: can we assert semaphore is taken here?
         self.__reader_count += 1
         return self.__reader_count
 
@@ -19,18 +20,18 @@ class ReaderWriter:
             self.outer = reader_writer
 
         def __enter__(self):
-            with self.outer.__reader_mutex:
+            with self.outer._reader_mutex:
                 readers = self.outer.increment_reader()
                 if readers == 1:
-                    self.outer.__reader_writer_mutex.acquire()
+                    self.outer._reader_writer_mutex.acquire()
 
             return self
 
         def __exit__(self, exc_type, exc_value, traceback):
-            with self.outer.__reader_mutex:
+            with self.outer._reader_mutex:
                 readers = self.outer.decrement_reader()
                 if readers == 0:
-                    self.outer.__reader_writer_mutex.release()
+                    self.outer._reader_writer_mutex.release()
 
             return False  # Allow exceptions to propagate
 
