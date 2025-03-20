@@ -56,10 +56,11 @@ class ReaderWriter:
 
 # vegorla remove after testing
 # Example Usage
-reader_writer = ReaderWriter()
-with reader_writer.ReadLock(reader_writer):
-    print("Reading data safely!")
+if __name__ == '__main__':
+    reader_writer = ReaderWriter()
+    with reader_writer.ReadLock(reader_writer):
+        print("Reading data safely!")
 
-# Using WriteLock
-with reader_writer.WriteLock(reader_writer):
-    print("Writing data safely!")
+    # Using WriteLock
+    with reader_writer.WriteLock(reader_writer):
+        print("Writing data safely!")
