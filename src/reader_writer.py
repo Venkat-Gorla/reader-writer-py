@@ -54,13 +54,3 @@ class ReaderWriter:
             self.outer._reader_writer_mutex.release()
             return False  # Allow exceptions to propagate
 
-# vegorla remove after testing
-# Example Usage
-if __name__ == '__main__':
-    reader_writer = ReaderWriter()
-    with reader_writer.ReadLock(reader_writer):
-        print("Reading data safely!")
-
-    # Using WriteLock
-    with reader_writer.WriteLock(reader_writer):
-        print("Writing data safely!")

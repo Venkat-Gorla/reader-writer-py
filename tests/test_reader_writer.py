@@ -46,6 +46,10 @@ class TestReaderWriter(unittest.TestCase):
         """Ensure that writers wait while a reader holds the lock."""
         self._assert_lock_blocks_other(self.reader_writer.ReadLock, self.reader_writer.WriteLock)
 
+    def test_multiple_writers(self):
+        """Ensure that a writer blocks other writers."""
+        self._assert_lock_blocks_other(self.reader_writer.WriteLock, self.reader_writer.WriteLock)
+
     def _assert_lock_blocks_other(self, blocking_lock, blocked_lock):
         """Helper method to verify that a lock blocks another."""
         helper = LockTestHelper(blocked_lock)
@@ -65,16 +69,3 @@ class TestReaderWriter(unittest.TestCase):
 
 if __name__ == '__main__':
     unittest.main()
-
-    # def test_multiple_writers(self):
-    #     """Ensure that only one writer can hold the lock at a time"""
-    #     mock1, mock2 = Mock(), Mock()
-
-    #     with self.reader_writer.WriteLock(self.reader_writer):
-    #         mock1()
-    #         with self.assertRaises(RuntimeError):
-    #             with self.reader_writer.WriteLock(self.reader_writer):
-    #                 mock2()
-
-    #     mock1.assert_called_once()
-    #     mock2.assert_not_called()
