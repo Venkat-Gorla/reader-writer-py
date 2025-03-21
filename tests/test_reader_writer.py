@@ -29,6 +29,24 @@ class TestReaderWriter(unittest.TestCase):
         mock1.assert_called_once()
         mock2.assert_called_once()
 
+    def test_multiple_reader_threads(self):
+        """Ensure multiple readers can acquire the ReadLock simultaneously."""
+        num_readers = 10
+        readers = [LockTestHelper(self.reader_writer.ReadLock) for _ in range(num_readers)]
+
+        for reader in readers:
+            reader.start_thread(self.reader_writer)
+
+        for reader in readers:
+            self.assertTrue(reader.attempted.wait())
+
+        for reader in readers:
+            reader.join_thread()
+
+        # Now that all threads have finished, they MUST have acquired the lock
+        for reader in readers:
+            self.assertTrue(reader.acquired.is_set())
+
     def test_single_writer(self):
         """Test that a single writer can acquire the WriteLock"""
         mock = Mock()
