@@ -54,7 +54,9 @@ Run tests from the project root:
 python -m unittest discover tests
 ```
 
-📸 **Screenshot of tests in action will be added soon.**
+## ✅ Unit Tests in Action
+
+<img src="./public/unit-tests.PNG" alt="Unit Test Results" width="700" />
 
 ## 📁 Project Structure
 
