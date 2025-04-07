@@ -14,7 +14,7 @@ class ReaderWriter:
 
         def __enter__(self):
             with self.outer._reader_mutex:
-                readers = self.outer.increment_reader()
+                readers = self.outer._increment_reader()
                 if readers == 1:
                     self.outer._reader_writer_mutex.acquire()
 
@@ -22,19 +22,23 @@ class ReaderWriter:
 
         def __exit__(self, exc_type, exc_value, traceback):
             with self.outer._reader_mutex:
-                readers = self.outer.decrement_reader()
+                readers = self.outer._decrement_reader()
                 if readers == 0:
                     self.outer._reader_writer_mutex.release()
 
             return False # Allow exceptions to propagate
 
-    def increment_reader(self):
+    def _increment_reader(self):
+        # Ensure that _reader_mutex is already held - do not allow usage
+        # without proper locking.
         if self._reader_mutex.acquire(blocking=False):
             raise RuntimeError("Error: Reader mutex was not locked!")
         self.__reader_count += 1
         return self.__reader_count
 
-    def decrement_reader(self):
+    def _decrement_reader(self):
+        # Ensure that _reader_mutex is already held - do not allow usage
+        # without proper locking.
         if self._reader_mutex.acquire(blocking=False):
             raise RuntimeError("Error: Reader mutex was not locked!")
         self.__reader_count -= 1
