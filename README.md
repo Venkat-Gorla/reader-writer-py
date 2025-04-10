@@ -4,11 +4,11 @@ This project implements the classic **Reader-Writer problem** using Python’s `
 
 ## ✅ Features
 
-- ✔️ Multiple readers can read concurrently
-- ✔️ Writers get exclusive access
-- ✔️ Prevents race conditions using semaphores
-- ✔️ Clean context-manager support with `with` blocks
-- ✔️ Fully tested with comprehensive unit test coverage
+✔️ Multiple readers can read concurrently  
+✔️ Writers get exclusive access  
+✔️ Prevents race conditions using semaphores  
+✔️ Clean context-manager support with `with` blocks  
+✔️ Fully tested with comprehensive unit test coverage  
 
 ## 📊 Design Overview
 
